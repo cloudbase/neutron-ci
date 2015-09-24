@@ -35,6 +35,7 @@ function archive_devstack_logs() {
     $GZIP -c /var/log/dmesg > "$LOG_DST_DEVSTACK/dmesg.log.gz"
     $GZIP -c /var/log/kern.log > "$LOG_DST_DEVSTACK/kern.log.gz"
     $GZIP -c /var/log/syslog > "$LOG_DST_DEVSTACK/syslog.log.gz"
+    $GZIP -c /opt/stack/logs/stack.sh.txt > "$LOG_DST_DEVSTACK/stack.sh.txt.gz"
     mkdir -p "$LOG_DST_DEVSTACK/rabbitmq"
     cp /var/log/rabbitmq/* "$LOG_DST_DEVSTACK/rabbitmq"
     sudo rabbitmqctl status > "$LOG_DST_DEVSTACK/rabbitmq/status.txt" 2>&1
@@ -62,8 +63,8 @@ function archive_devstack_configs() {
     $GZIP -c /home/ubuntu/devstack/local.conf > "$CONFIG_DST_DEVSTACK/local.conf.gz"
     $GZIP -c /opt/stack/tempest/etc/tempest.conf > "$CONFIG_DST_DEVSTACK/tempest.conf.gz"
     df -h > "$CONFIG_DST_DEVSTACK/df.txt" 2>&1 && $GZIP "$CONFIG_DST_DEVSTACK/df.txt"
-    cp /home/devstack/bin/excluded-tests.txt "$CONFIG_DST_DEVSTACK/excluded-tests.txt"
-    cp /home/devstack/bin/isolated-tests.txt "$CONFIG_DST_DEVSTACK/isolated-tests.txt"
+    cp /home/ubuntu/bin/excluded-tests.txt "$CONFIG_DST_DEVSTACK/excluded-tests.txt"
+    cp /home/ubuntu/bin/isolated-tests.txt "$CONFIG_DST_DEVSTACK/isolated-tests.txt"
     iptables-save > "$CONFIG_DST_DEVSTACK/iptables.txt" 2>&1 && $GZIP "$CONFIG_DST_DEVSTACK/iptables.txt"
     dpkg-query -l > "$CONFIG_DST_DEVSTACK/dpkg-l.txt" 2>&1 && $GZIP "$CONFIG_DST_DEVSTACK/dpkg-l.txt"
     pip freeze > "$CONFIG_DST_DEVSTACK/pip-freeze.txt" 2>&1 && $GZIP "$CONFIG_DST_DEVSTACK/pip-freeze.txt"
