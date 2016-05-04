@@ -191,6 +191,15 @@ Add-Content "$env:APPDATA\pip\pip.ini" $pip_conf_content
 & pip install -U --pre pymi
 & pip install cffi
 & pip install numpy
+& pip install pycrypto
+
+if (($branchName.ToLower().CompareTo($('stable/mitaka').ToLower()) -eq 0) -or ($branchName.ToLower().CompareTo($('stable/liberty').ToLower()) -eq 0)) {
+    & pip install Babel==2.2.0
+}
+
+if (($branchName.CompareTo('stable/kilo')) -eq 0) {
+    & pip install testresources==1.0.0
+}
 
 popd
 
@@ -342,7 +351,8 @@ if ($(get-service nova-compute).Status -eq "Stopped")
     }
 }
 
-Write-Host "Starting neutron-hyperv-agent service"
+$currDate = (Get-Date).ToString()
+Write-Host "$currDate neutron-hyperv-agent service"
 Try
 {
     Start-Service neutron-hyperv-agent
