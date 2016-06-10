@@ -192,10 +192,7 @@ Add-Content "$env:APPDATA\pip\pip.ini" $pip_conf_content
 & pip install cffi
 & pip install numpy
 & pip install pycrypto
-
-if (($branchName.ToLower().CompareTo($('stable/mitaka').ToLower()) -eq 0) -or ($branchName.ToLower().CompareTo($('stable/liberty').ToLower()) -eq 0)) {
-    & pip install Babel==2.2.0
-}
+& pip install amqp==1.4.9
 
 if (($branchName.CompareTo('stable/kilo')) -eq 0) {
     & pip install testresources==1.0.0
