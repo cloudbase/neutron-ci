@@ -184,7 +184,7 @@ $hasPipConf = Test-Path "$env:APPDATA\pip"
 if ($hasPipConf -eq $false){
     mkdir "$env:APPDATA\pip"
 }
-else 
+else
 {
     Remove-Item -Force "$env:APPDATA\pip\*"
 }
@@ -193,10 +193,6 @@ Add-Content "$env:APPDATA\pip\pip.ini" $pip_conf_content
 & easy_install -U pip
 & pip install -U setuptools
 & pip install -U --pre pymi
-& pip install cffi
-& pip install numpy
-& pip install pycrypto
-& pip install amqp==1.4.9
 
 if (($branchName.CompareTo('stable/kilo')) -eq 0) {
     & pip install testresources==1.0.0
@@ -208,7 +204,7 @@ $hasPipConf = Test-Path "$env:APPDATA\pip"
 if ($hasPipConf -eq $false){
     mkdir "$env:APPDATA\pip"
 }
-else 
+else
 {
     Remove-Item -Force "$env:APPDATA\pip\*"
 }
@@ -244,7 +240,7 @@ ExecRetry {
    & pip install -c upper-constraints.txt -U .
    if ($LastExitCode) { Throw "Failed to install openstack/requirements from repo" }
    popd
-}   
+}
 
 ExecRetry {
     if ($isDebug -eq  'yes') {
