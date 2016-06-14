@@ -4,6 +4,9 @@ basedir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 . $basedir/config.sh
 mkdir -p $TEMPEST_DIR
 
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+DIR=$( dirname "$DIR" )
+
 pushd $basedir
 
 . $basedir/utils.sh
@@ -32,7 +35,7 @@ $basedir/parallel-test-runner.sh $tests_file $tests_dir $log_file \
 
 rm $tests_file
 
-isolated_tests_list_file=$basedir/isolated-tests.txt
+isolated_tests_list_file=$DIR/testLists/isolated-tests.txt
 if [ -f "$isolated_tests_list_file" ]; then
     echo "Running isolated tests from: $isolated_tests_list_file"
     isolated_tests_file=$(tempfile)
@@ -48,7 +51,7 @@ fi
 
 
 echo "Generating HTML report..."
-python $basedir/subunit2html.py $log_file $results_html_file
+subunit2html $log_file $results_html_file
 
 cat $log_file | subunit-trace -n -f > $tempest_output_file 2>&1 || true
 
