@@ -288,8 +288,12 @@ ExecRetry {
     }
     pushd $buildDir\compute-hyperv
     Write-Host "Installing openstack/compute-hyperv..."
-    & update-requirements.exe --source $buildDir\requirements .
-    & pip install -c $buildDir\requirements\upper-constraints.txt -U .
+    if ($branchName -eq 'master') {
+        & pip install -e $buildDir\compute-hyperv
+    } else {
+        & update-requirements.exe --source $buildDir\requirements .
+        & pip install -c $buildDir\requirements\upper-constraints.txt -U .
+    }
     if ($LastExitCode) { Throw "Failed to install compute-hyperv from repo" }
     popd
 }
