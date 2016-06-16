@@ -142,6 +142,10 @@ if ($buildFor -eq "openstack/neutron") {
         GitClonePull "$buildDir\compute-hyperv" "https://git.openstack.org/openstack/compute-hyperv.git" $branchName
     }
     Get-ChildItem $buildDir
+    ExecRetry {
+        GitClonePull "$buildDir\requirements" "https://git.openstack.org/openstack/requirements.git" $branchName
+    }
+    Get-ChildItem $buildDir
 }
 else {
     Throw "Cannot build for project: $buildFor"
@@ -180,19 +184,15 @@ $hasPipConf = Test-Path "$env:APPDATA\pip"
 if ($hasPipConf -eq $false){
     mkdir "$env:APPDATA\pip"
 }
-else 
+else
 {
     Remove-Item -Force "$env:APPDATA\pip\*"
 }
 Add-Content "$env:APPDATA\pip\pip.ini" $pip_conf_content
 
-& easy_install -U pip
+& easy_install -f http://dl.openstack.tld:8080/cloudbase/CI/+simple/pip pip
 & pip install -U setuptools
 & pip install -U --pre pymi
-& pip install cffi
-& pip install numpy
-& pip install pycrypto
-& pip install amqp==1.4.9
 
 if (($branchName.CompareTo('stable/kilo')) -eq 0) {
     & pip install testresources==1.0.0
@@ -204,7 +204,7 @@ $hasPipConf = Test-Path "$env:APPDATA\pip"
 if ($hasPipConf -eq $false){
     mkdir "$env:APPDATA\pip"
 }
-else 
+else
 {
     Remove-Item -Force "$env:APPDATA\pip\*"
 }
@@ -234,12 +234,23 @@ if ($isDebug -eq  'yes') {
 }
 
 ExecRetry {
+   pushd "$buildDir\requirements"
+   Write-Host "Installing OpenStack/Requirements..."
+   & pip install -c upper-constraints.txt -U pbr virtualenv httplib2 prettytable>=0.7 setuptools
+   & pip install -c upper-constraints.txt -U .
+   if ($LastExitCode) { Throw "Failed to install openstack/requirements from repo" }
+   popd
+}
+
+ExecRetry {
     if ($isDebug -eq  'yes') {
         Write-Host "Content of $buildDir\$projectName"
         Get-ChildItem $buildDir\$projectName
     }
     pushd $buildDir\$projectName
-    & pip install $buildDir\$projectName
+    Write-Host "Installing openstack/neutron..."
+    & update-requirements.exe --source $buildDir\requirements .
+    & pip install -c $buildDir\requirements\upper-constraints.txt -U .
     if ($LastExitCode) { Throw "Failed to install neutron from repo" }
     popd
 }
@@ -250,7 +261,9 @@ ExecRetry {
         Get-ChildItem $buildDir\networking-hyperv
     }
     pushd $buildDir\networking-hyperv
-    & pip install $buildDir\networking-hyperv
+    Write-Host "Installing openstack/networking-hyperv..."
+    & update-requirements.exe --source $buildDir\requirements .
+    & pip install -c $buildDir\requirements\upper-constraints.txt -U .
     if ($LastExitCode) { Throw "Failed to install networking-hyperv from repo" }
     popd
 }
@@ -261,8 +274,10 @@ ExecRetry {
         Get-ChildItem $buildDir\nova
     }
     pushd $buildDir\nova
-    & pip install $buildDir\nova
-    if ($LastExitCode) { Throw "Failed to install nova fom repo" }
+    Write-Host "Installing openstack/nova..."
+    & update-requirements.exe --source $buildDir\requirements .
+    & pip install -c $buildDir\requirements\upper-constraints.txt -U .
+    if ($LastExitCode) { Throw "Failed to install nova from repo" }
     popd
 }
 
@@ -272,7 +287,13 @@ ExecRetry {
         Get-ChildItem $buildDir\compute-hyperv
     }
     pushd $buildDir\compute-hyperv
-    & pip install $buildDir\compute-hyperv
+    Write-Host "Installing openstack/compute-hyperv..."
+    if ($branchName -eq 'master') {
+        & pip install -e $buildDir\compute-hyperv
+    } else {
+        & update-requirements.exe --source $buildDir\requirements .
+        & pip install -c $buildDir\requirements\upper-constraints.txt -U .
+    }
     if ($LastExitCode) { Throw "Failed to install compute-hyperv from repo" }
     popd
 }
