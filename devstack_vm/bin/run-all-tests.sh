@@ -48,7 +48,7 @@ fi
 
 
 echo "Generating HTML report..."
-python $basedir/subunit2html.py $log_file $results_html_file
+$basedir/get-results-html.sh $log_file $results_html_file
 
 cat $log_file | subunit-trace -n -f > $tempest_output_file 2>&1 || true
 
