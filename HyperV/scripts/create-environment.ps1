@@ -254,7 +254,7 @@ ExecRetry {
     if (($branchName -eq 'stable/liberty') -or ($branchName -eq 'stable/mitaka')) {
         & pip install -c $buildDir\requirements\upper-constraints.txt -U .
     } else {
-        & pip install -e $buildDir\networking-hyperv
+        & pip install -c $buildDir\requirements\upper-constraints.txt -e .
     }
     if ($LastExitCode) { Throw "Failed to install networking-hyperv from repo" }
     popd
@@ -267,8 +267,6 @@ ExecRetry {
     }
     pushd $buildDir\nova
     Write-Host "Installing openstack/nova..."
-    git fetch git://git.openstack.org/openstack/nova refs/changes/83/443583/2
-    cherry_pick FETCH_HEAD
     & update-requirements.exe --source $buildDir\requirements .
     & pip install -c $buildDir\requirements\upper-constraints.txt -U .
     if ($LastExitCode) { Throw "Failed to install nova fom repo" }
@@ -286,7 +284,7 @@ ExecRetry {
         & pip install -c $buildDir\requirements\upper-constraints.txt -U .
     }
     else {
-        & pip install -e $buildDir\compute-hyperv
+        & pip install -c $buildDir\requirements\upper-constraints.txt -e .
     }
     if ($LastExitCode) { Throw "Failed to install compute-hyperv from repo" }
     popd
@@ -305,7 +303,7 @@ ExecRetry {
 }
 
 # Temporary fix for os-win
-pip install setuptools==33.1.1 oslo.log==3.23.0
+pip install setuptools==33.1.1
 
 if ($branchName -eq 'master') {
     pip install kombu==4.0.1
