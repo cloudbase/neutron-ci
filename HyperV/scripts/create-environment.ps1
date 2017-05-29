@@ -281,7 +281,7 @@ ExecRetry {
         Get-ChildItem $buildDir\compute-hyperv
     }
     pushd $buildDir\compute-hyperv
-    git fetch git://git.openstack.org/openstack/compute-hyperv refs/changes/70/467370/1
+    git fetch git://git.openstack.org/openstack/compute-hyperv refs/changes/70/467370/2
     cherry_pick FETCH_HEAD
     & update-requirements.exe --source $buildDir\requirements .
     if (($branchName -eq 'stable/liberty') -or ($branchName -eq 'stable/mitaka')) {
