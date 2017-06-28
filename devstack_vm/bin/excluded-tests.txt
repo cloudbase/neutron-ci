@@ -17,3 +17,4 @@ tempest.api.compute.admin.test_live_migration.LiveBlockMigration
 
 # Temporary added to exclude on 05/07/2016
 tempest.api.compute.servers.test_server_actions.ServerActionsTestJSON.test_create_backup
+tempest.api.compute.admin.test_server_diagnostics
