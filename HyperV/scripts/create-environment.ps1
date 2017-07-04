@@ -268,6 +268,11 @@ ExecRetry {
         Get-ChildItem $buildDir\nova
     }
     pushd $buildDir\nova
+    if ($branchName -eq 'master') {
+        # This patch fixes things with InstanceMetadata
+        git fetch git://git.openstack.org/openstack/nova refs/changes/25/479325/1
+        cherry_pick FETCH_HEAD
+    }
     Write-Host "Installing openstack/nova..."
     & update-requirements.exe --source $buildDir\requirements .
     & pip install -c $buildDir\requirements\upper-constraints.txt -U .
